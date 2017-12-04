@@ -1,4 +1,5 @@
 #define MyAnalysis_cxx
+//
 // The class definition in MyAnalysis.h has been generated automatically
 // by the ROOT utility TTree::MakeSelector(). This class is derived
 // from the ROOT class TSelector. For more information on the TSelector
