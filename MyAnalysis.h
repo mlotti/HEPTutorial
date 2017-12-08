@@ -186,7 +186,9 @@ public:
    
    TH1F *h_Mmumu;
    TH1F *h_NMuon;
-   
+
+   TH1F *h_JetMultiplicity;
+
    vector<TH1F*> histograms;
    vector<TH1F*> histograms_MC;
    

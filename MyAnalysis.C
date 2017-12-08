@@ -61,6 +61,7 @@ void MyAnalysis::BuildEvent() {
       MyJet jet(Jet_Px[i], Jet_Py[i], Jet_Pz[i], Jet_E[i]);
       jet.SetBTagDiscriminator(Jet_btag[i]);
       jet.SetJetID(Jet_ID[i]);
+      jet.SetJetMultiplicity(NJet);
       Jets.push_back(jet);
    }
    
@@ -104,6 +105,12 @@ void MyAnalysis::SlaveBegin(TTree * /*tree*/) {
    histograms.push_back(h_NMuon);
    histograms_MC.push_back(h_NMuon);
    
+   h_JetMultiplicity = new TH1F("JetMulti", "Jet Multiplicity", 7, 0, 7);
+   h_JetMultiplicity->SetXTitle("Jet Multiplicity");
+   h_JetMultiplicity->Sumw2();
+   histograms.push_back(h_JetMultiplicity);
+   histograms_MC.push_back(h_JetMultiplicity);
+
 }
 
 Bool_t MyAnalysis::Process(Long64_t entry) {
@@ -172,13 +179,21 @@ Bool_t MyAnalysis::Process(Long64_t entry) {
          if (N_IsoMuon == 2) muon2 = &(*jt);
       }
    }
-   
+      
    h_NMuon->Fill(N_IsoMuon, EventWeight);
+
+   for (vector<MyJet>::iterator it = Jets.begin(); it != Jets.end(); ++it) {
+      if (N_IsoMuon > 1 && triggerIsoMu24) {
+         if (muon1->Pt()>MuonPtCut) {
+	    h_JetMultiplicity->Fill(it->GetJetMultiplicity(),EventWeight);
+         }
+      }
+   }
    
    if (N_IsoMuon > 1 && triggerIsoMu24) {
       if (muon1->Pt()>MuonPtCut) {
          h_Mmumu->Fill((*muon1 + *muon2).M(), EventWeight);
-      }
+      } 
    }
    //////////////////////////////
    

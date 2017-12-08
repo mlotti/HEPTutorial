@@ -47,12 +47,21 @@ class MyJet: public TLorentzVector {
       }
       ;
 
+      void SetJetMultiplicity(int N) {
+         jetMulti = N;
+      }
+      ;
+      
+      int GetJetMultiplicity() {
+         return jetMulti;
+      }
+      ;
 
    private:
 
       double btag;
       bool jetid;
-
+      int jetMulti;
 };
 
 #endif /* MYJET_H_ */
