@@ -105,13 +105,19 @@ void MyAnalysis::SlaveBegin(TTree * /*tree*/) {
    histograms.push_back(h_NMuon);
    histograms_MC.push_back(h_NMuon);
    
+   h_EPt = new TH1F("h_EPt", "electron pt", 40, 0, 400);
+   h_EPt->SetXTitle("electron Pt");
+   h_EPt->Sumw2();
+   histograms.push_back(h_EPt);
+   histograms_MC.push_back(h_EPt);
+
    h_JetMultiplicity = new TH1F("JetMulti", "Jet Multiplicity", 7, 0, 7);
    h_JetMultiplicity->SetXTitle("Jet Multiplicity");
    h_JetMultiplicity->Sumw2();
    histograms.push_back(h_JetMultiplicity);
    histograms_MC.push_back(h_JetMultiplicity);
 
-   h_JetPt = new TH1F("JetPt", "Jet Momentum",400,0,400);
+   h_JetPt = new TH1F("JetPt", "Jet Momentum",40,0,400);
    h_JetPt->SetXTitle("Jet Momentum");
    h_JetPt->Sumw2();
    histograms.push_back(h_JetPt);
@@ -198,7 +204,17 @@ Bool_t MyAnalysis::Process(Long64_t entry) {
       }
    }   
    
-   // muon momentum to be added
+   // electron momentum
+
+   for (vector<MyElectron>::iterator it = Electrons.begin(); it != Electrons.end(); ++it) {
+      if (N_IsoMuon >= 1 && triggerIsoMu24) {
+         if (muon1->Pt()>MuonPtCut) {
+            h_EPt->Fill(it->Pt(),EventWeight);
+         }
+      }
+   }
+
+   // muon momentum to be added 
 
    if (N_IsoMuon > 1 && triggerIsoMu24) {
       if (muon1->Pt()>MuonPtCut) {

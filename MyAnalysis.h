@@ -183,6 +183,8 @@ public:
    
    float weight_factor;
    float SF_b;
+
+   TH1F *h_EPt;
    
    TH1F *h_Mmumu;
    TH1F *h_NMuon;
