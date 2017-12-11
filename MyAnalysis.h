@@ -188,6 +188,7 @@ public:
    TH1F *h_NMuon;
 
    TH1F *h_JetMultiplicity;
+   TH1F *h_JetPt;
 
    vector<TH1F*> histograms;
    vector<TH1F*> histograms_MC;

@@ -111,6 +111,11 @@ void MyAnalysis::SlaveBegin(TTree * /*tree*/) {
    histograms.push_back(h_JetMultiplicity);
    histograms_MC.push_back(h_JetMultiplicity);
 
+   h_JetPt = new TH1F("JetPt", "Jet Momentum",400,0,400);
+   h_JetPt->SetXTitle("Jet Momentum");
+   h_JetPt->Sumw2();
+   histograms.push_back(h_JetPt);
+   histograms_MC.push_back(h_JetPt);
 }
 
 Bool_t MyAnalysis::Process(Long64_t entry) {
@@ -181,20 +186,26 @@ Bool_t MyAnalysis::Process(Long64_t entry) {
    }
       
    h_NMuon->Fill(N_IsoMuon, EventWeight);
+   
+   // jet multiplicity and Pt
 
    for (vector<MyJet>::iterator it = Jets.begin(); it != Jets.end(); ++it) {
-      if (N_IsoMuon > 1 && triggerIsoMu24) {
+      if (N_IsoMuon >= 1 && triggerIsoMu24) {
          if (muon1->Pt()>MuonPtCut) {
 	    h_JetMultiplicity->Fill(it->GetJetMultiplicity(),EventWeight);
+	    h_JetPt->Fill(it->Pt(),EventWeight);
          }
       }
-   }
+   }   
    
+   // muon momentum to be added
+
    if (N_IsoMuon > 1 && triggerIsoMu24) {
       if (muon1->Pt()>MuonPtCut) {
          h_Mmumu->Fill((*muon1 + *muon2).M(), EventWeight);
       } 
    }
+
    //////////////////////////////
    
    return kTRUE;
