@@ -128,6 +128,12 @@ void MyAnalysis::SlaveBegin(TTree * /*tree*/) {
    h_Tag->Sumw2();
    histograms.push_back(h_Tag);
    histograms_MC.push_back(h_Tag);
+
+   h_MET = new TH1F("hMET","MET",50,0,500);
+   h_MET->SetXTitle("MET");
+   h_MET->Sumw2();
+   histograms.push_back(h_MET);
+   histograms_MC.push_back(h_MET);
 }
 
 Bool_t MyAnalysis::Process(Long64_t entry) {
@@ -232,7 +238,13 @@ Bool_t MyAnalysis::Process(Long64_t entry) {
    }
 
    //////////////////////////////
-   
+
+   //MET
+   if (N_IsoMuon >= 1 && triggerIsoMu24) {
+         if (muon1->Pt()>MuonPtCut) {
+            h_MET->Fill(met.Pt(),EventWeight);
+         }
+   }
    return kTRUE;
 }
 
