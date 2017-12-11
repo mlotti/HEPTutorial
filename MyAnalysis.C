@@ -122,6 +122,12 @@ void MyAnalysis::SlaveBegin(TTree * /*tree*/) {
    h_JetPt->Sumw2();
    histograms.push_back(h_JetPt);
    histograms_MC.push_back(h_JetPt);
+
+   h_Tag = new TH1F("jetTag","Btagged",6,0,6);
+   h_Tag->SetXTitle("# of B-tagged jets");
+   h_Tag->Sumw2();
+   histograms.push_back(h_Tag);
+   histograms_MC.push_back(h_Tag);
 }
 
 Bool_t MyAnalysis::Process(Long64_t entry) {
@@ -154,7 +160,7 @@ Bool_t MyAnalysis::Process(Long64_t entry) {
    
    double MuonPtCut = 25.;
    double MuonRelIsoCut = 0.10;
-   
+ 
    //   cout << "Jets: " << endl;
    //   for (vector<MyJet>::iterator it = Jets.begin(); it != Jets.end(); ++it) {
    //      cout << "pt, eta, phi, btag, id: " << it->Pt() << ", " << it->Eta() << ", " << it->Phi() << ", " << it->IsBTagged() << ", " << it->GetJetID()
@@ -181,6 +187,7 @@ Bool_t MyAnalysis::Process(Long64_t entry) {
    // Exercise 1: Invariant Di-Muon mass
    
    int N_IsoMuon = 0;
+   int N_BTagged = 0;
    MyMuon *muon1, *muon2;
    
    for (vector<MyMuon>::iterator jt = Muons.begin(); jt != Muons.end(); ++jt) {
@@ -193,13 +200,15 @@ Bool_t MyAnalysis::Process(Long64_t entry) {
       
    h_NMuon->Fill(N_IsoMuon, EventWeight);
    
-   // jet multiplicity and Pt
+   // jet multiplicity Pt, b-tagged
 
    for (vector<MyJet>::iterator it = Jets.begin(); it != Jets.end(); ++it) {
       if (N_IsoMuon >= 1 && triggerIsoMu24) {
          if (muon1->Pt()>MuonPtCut) {
 	    h_JetMultiplicity->Fill(it->GetJetMultiplicity(),EventWeight);
 	    h_JetPt->Fill(it->Pt(),EventWeight);
+	    if (it->IsBTagged()) ++N_BTagged;
+	    h_Tag->Fill(N_BTagged,EventWeight);
          }
       }
    }   

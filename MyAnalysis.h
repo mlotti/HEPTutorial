@@ -191,6 +191,7 @@ public:
 
    TH1F *h_JetMultiplicity;
    TH1F *h_JetPt;
+   TH1F *h_Tag;
 
    vector<TH1F*> histograms;
    vector<TH1F*> histograms_MC;
