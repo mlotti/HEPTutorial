@@ -13,6 +13,7 @@
 #include <iostream>
 
 #include <TH1F.h>
+#include <TEfficiency.h>
 #include <TStyle.h>
 #include <THStack.h>
 #include <TCanvas.h>
@@ -33,6 +34,11 @@ public:
 		data.clear();
 		data_names.clear();
 	}
+//        void AddEff(std::vector<TEfficiency*> v, std::string n){
+//                bg.push_back(v);
+//                bg_names.push_back(n);
+//                N_histos = v.size();
+//        }
 	void AddBg(std::vector<TH1F*> v, std::string n){
 		bg.push_back(v);
 		bg_names.push_back(n);

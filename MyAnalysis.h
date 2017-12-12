@@ -13,6 +13,7 @@
 #include <TChain.h>
 #include <TSelector.h>
 #include <TH1F.h>
+#include <TEfficiency.h>
 #include <TLorentzVector.h>
 #include <vector>
 
@@ -197,8 +198,17 @@ public:
 
    TH1F *h_MET;
 
+   TH1F *h_passed;
+   TH1F *h_total;
+
+   TEfficiency *muon_eff_pt;
+   TEfficiency *teff;
+
    vector<TH1F*> histograms;
    vector<TH1F*> histograms_MC;
+   
+   vector<TEfficiency*> efficiencies;
+   vector<TEfficiency*> efficiencies_MC;
    
 };
 

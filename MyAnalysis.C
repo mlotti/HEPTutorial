@@ -28,6 +28,7 @@
 #include <iostream>
 #include <TH1F.h>
 #include <TLatex.h>
+#include <TEfficiency.h>
 
 using namespace std;
 
@@ -99,6 +100,22 @@ void MyAnalysis::SlaveBegin(TTree * /*tree*/) {
    histograms.push_back(h_Mmumu);
    histograms_MC.push_back(h_Mmumu);
    
+   h_passed = new TH1F("passed", "", 50, 10, 500);
+   h_passed->SetXTitle("");
+   h_passed->Sumw2();
+   histograms.push_back(h_passed);
+   histograms_MC.push_back(h_passed);
+
+   h_total = new TH1F("total", "", 50, 10, 500);
+   h_total->SetXTitle("");
+   h_total->Sumw2();
+   histograms.push_back(h_total);
+   histograms_MC.push_back(h_total);
+   
+   muon_eff_pt = new TEfficiency("","",50,10,500);
+   efficiencies.push_back(muon_eff_pt);
+   efficiencies_MC.push_back(muon_eff_pt);
+
    h_NMuon = new TH1F("NMuon", "Number of muons", 7, 0, 7);
    h_NMuon->SetXTitle("No. Muons");
    h_NMuon->Sumw2();
@@ -215,17 +232,23 @@ Bool_t MyAnalysis::Process(Long64_t entry) {
          if (N_IsoMuon == 2) muon2 = &(*jt);
       }
    }
+   for (vector<MyJet>::iterator it = Jets.begin(); it != Jets.end(); ++it) {
+      if (N_IsoMuon >= 1 && triggerIsoMu24) {
+         if (muon1->Pt()>MuonPtCut) {
+            if (it->IsBTagged()) ++N_BTagged;
+         }
+      }
+   }
       
    h_NMuon->Fill(N_IsoMuon, EventWeight);
    
    // jet multiplicity Pt, b-tagged
 
    for (vector<MyJet>::iterator it = Jets.begin(); it != Jets.end(); ++it) {
-      if (N_IsoMuon >= 1 && triggerIsoMu24) {
+      if (N_IsoMuon >= 1 && triggerIsoMu24 && it->GetJetMultiplicity() >= 2 && N_BTagged >= 2 && met.Pt() >= 80) {
          if (muon1->Pt()>MuonPtCut) {
 	    h_JetMultiplicity->Fill(it->GetJetMultiplicity(),EventWeight);
 	    h_JetPt->Fill(it->Pt(),EventWeight);
-	    if (it->IsBTagged()) ++N_BTagged;
 	    h_Tag->Fill(N_BTagged,EventWeight);
             h_JetEta->Fill(it->Eta(),EventWeight);
 	 }
@@ -246,9 +269,14 @@ Bool_t MyAnalysis::Process(Long64_t entry) {
    // muon momentum to be added 
 
    if (N_IsoMuon > 1 && triggerIsoMu24) {
+      h_total->Fill(muon1->Pt(),EventWeight);
       if (muon1->Pt()>MuonPtCut) {
          h_Mmumu->Fill((*muon1 + *muon2).M(), EventWeight);
+         h_passed->Fill(muon1->Pt(),EventWeight);
       } 
+      teff = new TEfficiency(*h_passed,*h_total); 
+      muon_eff_pt->Add(*teff);  
+//        h_total->Divide(h_passed);
    }
 
    //////////////////////////////
@@ -259,6 +287,10 @@ Bool_t MyAnalysis::Process(Long64_t entry) {
             h_MET->Fill(met.Pt(),EventWeight);
          }
    }
+
+   //////////////////////////////
+
+
    return kTRUE;
 }
 
