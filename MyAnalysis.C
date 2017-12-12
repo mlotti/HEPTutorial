@@ -111,6 +111,12 @@ void MyAnalysis::SlaveBegin(TTree * /*tree*/) {
    histograms.push_back(h_EPt);
    histograms_MC.push_back(h_EPt);
 
+   h_EEta = new TH1F("h_EEta", "electron eta", 30, -3, 3);
+   h_EEta->SetXTitle("electron eta");
+   h_EEta->Sumw2();
+   histograms.push_back(h_EEta);
+   histograms_MC.push_back(h_EEta);
+
    h_JetMultiplicity = new TH1F("JetMulti", "Jet Multiplicity", 7, 0, 7);
    h_JetMultiplicity->SetXTitle("Jet Multiplicity");
    h_JetMultiplicity->Sumw2();
@@ -122,6 +128,12 @@ void MyAnalysis::SlaveBegin(TTree * /*tree*/) {
    h_JetPt->Sumw2();
    histograms.push_back(h_JetPt);
    histograms_MC.push_back(h_JetPt);
+
+   h_JetEta = new TH1F("JetEta", "Jet Eta",30,-3,3);
+   h_JetEta->SetXTitle("Jet eta");
+   h_JetEta->Sumw2();
+   histograms.push_back(h_JetEta);
+   histograms_MC.push_back(h_JetEta);
 
    h_Tag = new TH1F("jetTag","Btagged",6,0,6);
    h_Tag->SetXTitle("# of B-tagged jets");
@@ -215,16 +227,18 @@ Bool_t MyAnalysis::Process(Long64_t entry) {
 	    h_JetPt->Fill(it->Pt(),EventWeight);
 	    if (it->IsBTagged()) ++N_BTagged;
 	    h_Tag->Fill(N_BTagged,EventWeight);
-         }
+            h_JetEta->Fill(it->Eta(),EventWeight);
+	 }
       }
    }   
    
-   // electron momentum
+   // electron momentum and eta
 
    for (vector<MyElectron>::iterator it = Electrons.begin(); it != Electrons.end(); ++it) {
       if (N_IsoMuon >= 1 && triggerIsoMu24) {
          if (muon1->Pt()>MuonPtCut) {
             h_EPt->Fill(it->Pt(),EventWeight);
+	    h_EEta->Fill(it->Eta(),EventWeight);
          }
       }
    }

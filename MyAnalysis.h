@@ -185,12 +185,14 @@ public:
    float SF_b;
 
    TH1F *h_EPt;
+   TH1F *h_EEta;
    
    TH1F *h_Mmumu;
    TH1F *h_NMuon;
 
    TH1F *h_JetMultiplicity;
    TH1F *h_JetPt;
+   TH1F *h_JetEta;
    TH1F *h_Tag;
 
    TH1F *h_MET;
